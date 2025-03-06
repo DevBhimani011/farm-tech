@@ -81,10 +81,12 @@ function Navbar(props) {
           >
             <MenuIcon />
           </IconButton>
+          {/* <img src="/logo1.png" alt="Logo" style={{ height: '10px', marginRight: '10px' }} /> */}
           <Typography
             variant="h6"
             component="div"
             sx={{ fontSize: 45, flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            
           >
             FarmTech
           </Typography>
