@@ -15,10 +15,22 @@ const itemSchema = new Schema({
   price: Number,
   image: {
     type: String,
-    // require: true,
+    require: true,
+  },
+  description: {
+    type: String,
+    require: true,
+  },
+  city: {
+    type: [String],
+    require: true,
+  },
+  stock: Number,
+  addedTime: {
+    type: Date,
+    default: Date.now,
   },
 });
 
 const Item = mongoose.model("Item", itemSchema);
 module.exports = Item;
-    

@@ -18,12 +18,15 @@ import Button from "@mui/material/Button";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { green } from "@mui/material/colors";
 
-const drawerWidth = 240;
+
+const drawerWidth = 150;
 const navItems = [
   { label: "Home", path: "/" },
+  { label: "Dashboard", path: "/dashboard" },
   { label: "products", path: "/products" },
   { label: "Add Product", path: "/addproduct" },
-  { label: "Add Cart", path: "/showcart" },
+  { label: "Edit products", path: "/editproducts" },
+  { label: "Profile", path: "/profile", icon: <AccountCircleIcon /> },
 ];
 export default function AdminNavbar(props) {
   const { window } = props;
@@ -83,7 +86,7 @@ export default function AdminNavbar(props) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
-            MUI
+            FarmTech
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (

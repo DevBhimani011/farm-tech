@@ -1,63 +1,129 @@
-const Razorpay = require('razorpay');
-const Payment = require('../models/payment');
-const User = require('../models/user');
-const date = require('date-and-time');
-const dotenv = require('dotenv');
+const Razorpay = require("razorpay");
+const Payment = require("../models/payment");
+const User = require("../models/user");
+const Item = require("../models/item");
+const Order = require("../models/order");
+const dotenv = require("dotenv");
 
 dotenv.config();
 
-const razorpay = new Razorpay({ 
-    key_id: process.env.KEY_ID, 
-    key_secret: process.env.KEY_SECRET 
-})
+const razorpay = new Razorpay({
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
+});
+
 const paymentController = {
+  checkout: async (req, res) => {
+    try {
+      const { amount, cartItems, quantity, userId } = req.body;
 
-    checkout: async (req, res) => {
-       const { amount, cartItems, userShipping,  quantity } = req.body;
-    //    const userId = req.user._id;
+      if (!userId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "User ID is required" });
+      }
 
-    //    const user = await User.findById(userId);
-    //    userAddress = user.address;
-    //    console.log("User Address:", userAddress);
-   
-       var options = {
-           amount: amount*100,  // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-           currency: "INR",
-           receipt: `receipt_${Date.now()}`
-         };
-         const order = await razorpay.orders.create(options);
-   
-         res.json({
-           orderId: order.id,
-           amount: amount,
-           cartItems,
-        //    userId,
-           payStatus: "created",
-            quantity,
-            // userAddress
-         })
-   },
-   
-   verify: async (req, res) => {
-       const { orderId, paymentId, signature, amount, quantity, cartItems, userId } = req.body;
+      // Fetch all valid items from DB
+      const validItems = await Item.find({}, "name stock");
+      const validItemNames = new Set(validItems.map((item) => item.name));
 
-       let orderConfirm = new Payment({
-           orderId,
-           paymentId,
-           signature,
-           amount,
-           quantity,
-           cartItems,
-           userId,
-           payStatus: "paid",
-       })
+      const validCartItems = cartItems.filter((cartItem) =>
+        validItemNames.has(cartItem.item)
+      );
 
-        orderConfirm.save()
-        .then(() => {
-            res.json({message: "Payment success!", success: true, orderConfirm})
-        })
-   }
-}
+      if (validCartItems.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "No valid items in cart",
+        });
+      }
 
+      for (let item of validCartItems) {
+        const product = await Item.findOne({ name: item.item });
+        if (product) {
+          product.stock -= item.quantity;
+          if (product.stock <= 0) await Item.deleteOne({ name: product.name });
+          else await product.save();
+        }
+      }
+
+      const options = {
+        amount: amount * 100,
+        currency: "INR",
+        receipt: `receipt_${Date.now()}`,
+      };
+      const order = await razorpay.orders.create(options);
+
+      res.json({
+        success: true,
+        orderId: order.id,
+        amount,
+        // cartItems: validCartItems,
+      });
+    } catch (error) {
+      console.error("Checkout error:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Error during checkout" });
+    }
+  },
+
+  verify: async (req, res) => {
+    try {
+    const {
+      orderId,
+      paymentId,
+      signature,
+      amount,
+      quantity,
+      cartItems,
+      userId,
+    } = req.body;
+
+      // Create payment record
+      const orderConfirm = new Payment({
+        orderId,
+        paymentId,
+        signature,
+        amount,
+        quantity,
+        cartItems,
+        userId,
+        payStatus: "paid",
+      });
+      await orderConfirm.save();
+
+      // Get user details for shipping address
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // Create order record
+      const newOrder = new Order({
+        userId,
+        items: cartItems,
+        totalAmount: amount,
+        paymentId,
+        orderId,
+        shippingAddress: user.address,
+      });
+      await newOrder.save();
+
+      // Clear user's cart after successful order
+      await User.findByIdAndUpdate(userId, { $set: { cart: [] } });
+
+      res.json({ 
+        message: "Payment and order created successfully!", 
+        success: true, 
+        orderConfirm,
+        order: newOrder 
+      });
+    } catch (error) {
+      console.error("Payment verification error:", error);
+      res.status(500).send("Error verifying payment");
+    }
+  },
+};
 
 module.exports = paymentController;
