@@ -118,9 +118,11 @@ export default function Login() {
     }
 
     setLoading(true);
+    console.log(import.meta.env.VITE_BACKEND_URL+"/auth/login");
+    
     try {
       const response = await axios.post(
-        "http://localhost:8080/auth/login",
+        import.meta.env.VITE_BACKEND_URL+"/auth/login",
         formData,
         {
           withCredentials: true,

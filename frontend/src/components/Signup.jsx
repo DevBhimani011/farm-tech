@@ -114,7 +114,7 @@ export default function Signup() {
 
     setLoading(true)
     try {
-      const response = await axios.post("http://localhost:8080/auth/signup", formData)
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL+"/auth/signup", formData)
       console.log(response.data)
       setTimeout(() => {
         navigate("/verifyOtp")

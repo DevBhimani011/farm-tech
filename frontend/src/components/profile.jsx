@@ -117,7 +117,7 @@ function ProfilePage() {
     setLoading(true);
     try {
       const response = await axios.put(
-        "http://localhost:8080/auth/edit-profile",
+        import.meta.env.VITE_BACKEND_URL+"/auth/edit-profile",
         updatedData,
         {
           withCredentials: true

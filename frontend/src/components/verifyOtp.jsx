@@ -35,7 +35,7 @@ function VerifyOtp() {
         try {
             console.log("Sending User ID:", userData.userId);
             const response = await axios.post(
-                "http://localhost:8080/auth/verifyOtp",
+                import.meta.env.VITE_BACKEND_URL+"/auth/verifyOtp",
                 { userId: userData.userId, otp },
                 { headers: { "Content-Type": "application/json" } }
             );

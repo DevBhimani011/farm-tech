@@ -182,7 +182,7 @@ export default function AddProduct() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/item/add",
+        import.meta.env.VITE_BACKEND_URL+"/item/add",
         formData,
         {
           withCredentials: true,

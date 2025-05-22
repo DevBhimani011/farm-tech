@@ -78,7 +78,7 @@ function Checkout() {
 
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/cart/showCart", {
+      const response = await axios.get(import.meta.env.VITE_BACKEND_URL+"/cart/showCart", {
         withCredentials: true
       });
       
@@ -136,7 +136,7 @@ function Checkout() {
 
       // Create order
       const orderResponse = await axios.post(
-        "http://localhost:8080/payment/checkout",
+        import.meta.env.VITE_BACKEND_URL+"/payment/checkout",
         {
           amount: total,
           cartItems,
@@ -177,7 +177,7 @@ function Checkout() {
             
             // Fixed typo in URL from second code snippet
             const verificationResponse = await axios.post(
-              "http://localhost:8080/payment/verify-payment", 
+              import.meta.env.VITE_BACKEND_URL+"/payment/verify-payment", 
               paymentData,
               { withCredentials: true }
             );

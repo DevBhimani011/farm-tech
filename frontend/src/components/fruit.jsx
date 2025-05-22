@@ -80,7 +80,7 @@ function Fruit() {
     };
 
     try {
-      const res = await axios.post("http://localhost:8080/cart/addCart", data, {
+      const res = await axios.post(import.meta.env.VITE_BACKEND_URL+"/cart/addCart", data, {
         withCredentials: true,
       });
       toast.success("Item added to cart");
@@ -112,11 +112,11 @@ function Fruit() {
   const fetchProducts = async (location = null) => {
     setIsLoading(true);
     try {
-      let url = "http://localhost:8080/item/showPro";
+      let url = import.meta.env.VITE_BACKEND_URL+"/item/showPro";
       
       // If location is provided, add it as query parameter
       if (location) {
-        url = `http://localhost:8080/item/showPro?district=${location}`;
+        url = `${import.meta.env.VITE_BACKEND_URL}/item/showPro?district=${location}`;
       }
       
       const response = await axios.get(url, { withCredentials: true });

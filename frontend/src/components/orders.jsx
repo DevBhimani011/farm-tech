@@ -71,7 +71,7 @@ function Orders() {
         const decoded = jwtDecode(token);
         const userId = decoded._id;
 
-        const response = await axios.get(`http://localhost:8080/orders/user/${userId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders/user/${userId}`, {
           withCredentials: true
         });
 
@@ -177,7 +177,7 @@ function Orders() {
   const handleSubmitRating = async () => {
     try {
       // This would be an API call to save the rating
-      // await axios.post(http://localhost:8080/orders/${selectedOrder._id}/rate, {
+      // await axios.post(import.meta.env.VITE_BACKEND_URL/orders/${selectedOrder._id}/rate, {
       //   rating: ratingValue,
       //   comment: ratingComment
       // });

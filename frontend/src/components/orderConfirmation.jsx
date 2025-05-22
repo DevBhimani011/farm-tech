@@ -72,7 +72,7 @@ function OrderConfirmation() {
         const decoded = jwtDecode(token);
         const userId = decoded._id;
 
-        const response = await axios.get(`http://localhost:8080/orders/latest/${userId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders/latest/${userId}`, {
           withCredentials: true
         });
 

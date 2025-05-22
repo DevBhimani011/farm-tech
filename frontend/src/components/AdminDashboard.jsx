@@ -85,7 +85,7 @@ const [openItemsDialog, setOpenItemsDialog] = useState(false);
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/orders/all');
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders/all`);
       
       if (!response.data || !response.data.success || !Array.isArray(response.data.orders)) {
         console.error("Invalid response format:", response.data);
@@ -104,7 +104,7 @@ const [openItemsDialog, setOpenItemsDialog] = useState(false);
   
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/auth/allusers');
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/allusers`);
       
       if (response.data && response.data.success && Array.isArray(response.data.users)) {
         setUsers(response.data.users);
@@ -124,7 +124,7 @@ const [openItemsDialog, setOpenItemsDialog] = useState(false);
     setSelectedUser(userId);
   
     try {
-      const response = await axios.get(`http://localhost:8080/orders/user/${userId}`);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders/user/${userId}`);
       
       if (response.data && Array.isArray(response.data.orders)) {
         setUserOrders(response.data.orders);

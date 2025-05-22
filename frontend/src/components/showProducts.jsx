@@ -58,7 +58,7 @@ export default function ProductShow() {
 
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/item/showPro", {
+        const response = await axios.get(import.meta.env.VITE_BACKEND_URL+"/item/showPro", {
           withCredentials: true,
         });
         setData(response.data);
