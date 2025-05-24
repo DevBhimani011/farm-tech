@@ -21,9 +21,12 @@ const dotenv = require("dotenv");
 dotenv.config();
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // Or an array of allowed origins
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['https://farm-tech.pages.dev'] 
+      : process.env.CLIENT_URL,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "UPDATE"], // This allows cookies to be sent with requests.
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "UPDATE"],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
