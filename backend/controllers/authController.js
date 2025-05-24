@@ -74,7 +74,7 @@ const authController = {
       res.cookie("loginCookie", token, {
         httpOnly: true,
         secure: false,
-        sameSite:"lax",
+        sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000,
       });
       res.status(201).json({ message: "Signup successful" });
@@ -107,12 +107,14 @@ const authController = {
             role: data.role,
             address: admin.address,
           },
-          "mysecret2"
+          process.env.COOKIE_SECRET
         );
-        res.cookie("loginCookie", token, {  httpOnly: true,
-        secure: false,
-        sameSite:"lax",
-        maxAge: 24 * 60 * 60 * 1000, });
+        res.cookie("loginCookie", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 24 * 60 * 60 * 1000,
+        });
         console.log(jwt.verify(token, "mysecret2").role);
 
         res.status(200).send("Login successful");
@@ -138,12 +140,15 @@ const authController = {
             },
             process.env.COOKIE_SECRET || "mysecret2"
           );
-          res.cookie("loginCookie", token, { 
+          res.cookie("loginCookie", token, {
             httpOnly: true,
             secure: true,
-            sameSite: 'none',
+            sameSite: "none",
             maxAge: 24 * 60 * 60 * 1000,
-            domain: process.env.NODE_ENV === 'production' ? 'farm-tech.pages.dev' : undefined
+            domain:
+              process.env.NODE_ENV === "production"
+                ? "farm-tech.pages.dev"
+                : undefined,
           });
           console.log(jwt.verify(token, "mysecret2").role);
           console.log(user);
@@ -201,12 +206,10 @@ const authController = {
       const user = await User.findOne({ email });
 
       if (!user) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: "User with this email does not exist",
-          });
+        return res.status(404).json({
+          success: false,
+          message: "User with this email does not exist",
+        });
       }
 
       // Generate reset token (valid for 1 hour)
@@ -318,12 +321,10 @@ If you did not request this, please ignore this email and your password will rem
       user.resetPasswordExpires = undefined;
       await user.save();
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "Password has been reset successfully",
-        });
+      return res.status(200).json({
+        success: true,
+        message: "Password has been reset successfully",
+      });
     } catch (error) {
       console.error("Reset password error:", error);
       return res
@@ -336,90 +337,90 @@ If you did not request this, please ignore this email and your password will rem
     try {
       const users = await User.find().sort({ createdAt: -1 });
       res.status(200).json({ success: true, users });
-      
     } catch (error) {
       console.error("Get all users error:", error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
     }
   },
-// ... existing code ...
+  // ... existing code ...
 
-editProfile: async (req, res) => {
-  try {
-    const token = req.cookies.loginCookie;
-    if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "No token provided" 
-      });
-    }
-
-    // Verify token and get user info
-    const decoded = jwt.verify(token, "mysecret2"); // Using the same secret as login
-    console.log(decoded);
-    
-    // Find user by email since we're using that in other places
-    const user = await User.findOne({ email: decoded.email });
-    
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found"
-      });
-    }
-
-    // Update user fields
-    user.name = req.body.name;
-    user.email = req.body.email;
-    user.phone = req.body.phone;
-    user.address = req.body.address;
-
-    // Save the updated user
-    const updatedUser = await user.save();
-
-    // Create new token with updated information
-    const newToken = jwt.sign(
-      {
-        _id: updatedUser._id,
-        user_id: updatedUser.user_id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        phone: updatedUser.phone,
-        role: updatedUser.role,
-        address: updatedUser.address
-      },
-      "mysecret2"
-    );
-
-    // Set the new token in cookies
-    res.cookie("loginCookie", newToken, {
-      httpOnly: false,
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    });
-
-    // Send success response with updated user data
-    res.status(200).json({
-      success: true,
-      message: "Profile updated successfully",
-      user: {
-        name: updatedUser.name,
-        email: updatedUser.email,
-        phone: updatedUser.phone,
-        address: updatedUser.address
+  editProfile: async (req, res) => {
+    try {
+      const token = req.cookies.loginCookie;
+      if (!token) {
+        return res.status(401).json({
+          success: false,
+          message: "No token provided",
+        });
       }
-    });
 
-  } catch (error) {
-    console.error("Profile update error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error updating profile",
-      error: error.message
-    });
-  }
-},
+      // Verify token and get user info
+      const decoded = jwt.verify(token, "mysecret2"); // Using the same secret as login
+      console.log(decoded);
 
-// ... rest of the existing code ...
+      // Find user by email since we're using that in other places
+      const user = await User.findOne({ email: decoded.email });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      // Update user fields
+      user.name = req.body.name;
+      user.email = req.body.email;
+      user.phone = req.body.phone;
+      user.address = req.body.address;
+
+      // Save the updated user
+      const updatedUser = await user.save();
+
+      // Create new token with updated information
+      const newToken = jwt.sign(
+        {
+          _id: updatedUser._id,
+          user_id: updatedUser.user_id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          phone: updatedUser.phone,
+          role: updatedUser.role,
+          address: updatedUser.address,
+        },
+        "mysecret2"
+      );
+
+      // Set the new token in cookies
+      res.cookie("loginCookie", newToken, {
+        httpOnly: false,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      });
+
+      // Send success response with updated user data
+      res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+        user: {
+          name: updatedUser.name,
+          email: updatedUser.email,
+          phone: updatedUser.phone,
+          address: updatedUser.address,
+        },
+      });
+    } catch (error) {
+      console.error("Profile update error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error updating profile",
+        error: error.message,
+      });
+    }
+  },
+
+  // ... rest of the existing code ...
 };
 
 module.exports = authController;
