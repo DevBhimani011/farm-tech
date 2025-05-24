@@ -2,6 +2,8 @@ const Item = require("../models/item");
 const multer = require("multer");
 const uploadOnCloudinary = require("../utils/cloudinary");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
