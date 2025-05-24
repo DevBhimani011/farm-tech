@@ -58,7 +58,7 @@ const itemController = {
         }
     
         // Verify token
-        const decoded = jwt.verify(token, process.env.COOKIE_SECRET || "mysecret2");
+        const decoded = await jwt.verify(token, process.env.COOKIE_SECRET || "mysecret2");
         console.log("Decoded Token:", decoded);
     
         // If district is selected in the request, use that
