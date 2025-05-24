@@ -141,9 +141,9 @@ const authController = {
             process.env.COOKIE_SECRET || "mysecret2"
           );
           const options ={
-            httpOnly: false,
+            httpOnly: true,
             secure: false,
-            sameSite: "lax",
+            sameSite: "None",
             maxAge: 24 * 60 * 60 * 1000,
           }
           res.cookie("loginCookie", token,options);
