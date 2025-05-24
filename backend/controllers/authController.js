@@ -136,9 +136,15 @@ const authController = {
               role: data.role,
               address: user.address,
             },
-            "mysecret2"
+            process.env.COOKIE_SECRET || "mysecret2"
           );
-          res.cookie("loginCookie", token, { httpOnly: false });
+          res.cookie("loginCookie", token, { 
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 24 * 60 * 60 * 1000,
+            domain: process.env.NODE_ENV === 'production' ? 'farm-tech.pages.dev' : undefined
+          });
           console.log(jwt.verify(token, "mysecret2").role);
           console.log(user);
 

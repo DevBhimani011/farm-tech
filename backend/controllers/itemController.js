@@ -46,6 +46,9 @@ const itemController = {
         
         // Get token from cookies
         const token = req.cookies.loginCookie;
+        console.log("Token from cookies:", token);
+        // If token is not found, return unauthorized
+        
         if (!token) {
           return res
             .status(401)
@@ -53,7 +56,7 @@ const itemController = {
         }
     
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "mysecret2");
+        const decoded = jwt.verify(token, process.env.COOKIE_SECRET || "mysecret2");
         console.log("Decoded Token:", decoded);
     
         // If district is selected in the request, use that

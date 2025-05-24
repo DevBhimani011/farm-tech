@@ -27,6 +27,8 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import AdminDashboard from "./components/AdminDashboard.jsx";
 export default function App() {
    axios.defaults.withCredentials = true;
+   axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+   axios.defaults.headers.common['Content-Type'] = 'application/json';
   return (
     <>
       <BrowserRouter>
