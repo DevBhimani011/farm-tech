@@ -142,16 +142,13 @@ const authController = {
           );
           res.cookie("loginCookie", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: false,
+            sameSite: "lax",
             maxAge: 24 * 60 * 60 * 1000,
-            domain:
-              process.env.NODE_ENV === "production"
-                ? "farm-tech.pages.dev"
-                : undefined,
           });
-          console.log(jwt.verify(token, "mysecret2").role);
-          console.log(user);
+          console.log("Token generated:", token);
+          console.log("Decoded token:", await jwt.verify(token, "mysecret2"));
+          // console.log(user);
 
           res.status(200).json({ message: "Login successful", user });
         }
