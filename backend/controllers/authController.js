@@ -140,12 +140,13 @@ const authController = {
             },
             process.env.COOKIE_SECRET || "mysecret2"
           );
-          res.cookie("loginCookie", token, {
-            httpOnly: true,
+          const options ={
+            httpOnly: false,
             secure: false,
             sameSite: "lax",
             maxAge: 24 * 60 * 60 * 1000,
-          });
+          }
+          res.cookie("loginCookie", token,options);
           console.log("Token generated:", token);
           console.log("Decoded token:", await jwt.verify(token, "mysecret2"));
           // console.log(user);
