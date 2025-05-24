@@ -109,7 +109,10 @@ const authController = {
           },
           "mysecret2"
         );
-        res.cookie("loginCookie", token, { httpOnly: false });
+        res.cookie("loginCookie", token, {  httpOnly: true,
+        secure: false,
+        sameSite:"lax",
+        maxAge: 24 * 60 * 60 * 1000, });
         console.log(jwt.verify(token, "mysecret2").role);
 
         res.status(200).send("Login successful");
